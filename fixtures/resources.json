@@ -1,0 +1,50 @@
+{
+  "records": [
+    {
+      "source": "a",
+      "id": "7",
+      "institution": "北港研究所",
+      "model": "M1",
+      "serial": "X7",
+      "observed": 10
+    },
+    {
+      "source": "b",
+      "id": "2",
+      "institution": "北港研究院",
+      "model": "M1",
+      "serial": null,
+      "observed": 20
+    },
+    {
+      "source": "a",
+      "id": "9",
+      "institution": "北港研究所",
+      "model": "M1",
+      "serial": "X9",
+      "observed": 10
+    }
+  ],
+  "aliases": [
+    {
+      "old": "北港研究所",
+      "new": "北港研究院",
+      "effective": 15
+    }
+  ],
+  "decisions": [
+    {
+      "type": "merge",
+      "sources": [
+        "a:7",
+        "b:2"
+      ],
+      "version": 1
+    },
+    {
+      "type": "split",
+      "entity": "resource-1",
+      "version": 2
+    }
+  ]
+}

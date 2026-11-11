@@ -1,0 +1,14 @@
+{
+  "records": [
+    {
+      "source": "alpha",
+      "id": "1",
+      "revision": 1,
+      "observed": 10,
+      "institution": "海洋 实验室",
+      "equipment": "深海成像仪",
+      "model": "Ｘ１００",
+      "serial": "S1"
+    }
+  ]
+}
