@@ -35,6 +35,30 @@ python3 -m collector serve --db var/records.sqlite3 --port 8080
 其他附件描述同领域的合成页面、协议或事件，可以由调用方构造本地来源。
 当前响应服务是顺序脚本工具，不自动推断认证、文件或表单业务；领域对象提供对应的本地交互。
 
+## 实体归并服务
+
+`collector/resolution.py` 在原始记录库之上归并多来源设备记录，输出稳定资源号（`resource-N`，只增不复用）。
+自动归并只接受充分证据：同一机构（旧名按生效时间归一）+ 同型号 + 序列号一致且未脱敏；
+型号相同只算候选，序列号缺失、脱敏或冲突的记录对进入候选队列，交人工确认。
+实体保留字段级来源、置信依据与冲突值；当前机构归属取观察时间最新的成员，
+更旧的快照（`observed` 更小）在入库时被拦截，原文与凭据仍完整保留。
+人工决定（合并/拆分）是持久约束，后续抓取不会覆盖；决定携带基准版本，
+若自动更新已先行改变实体，提交返回版本冲突（HTTP 409）并附当前版本，重新获取后可按各实体版本重试。
+拆分不删除任何行：误合并实体退役留痕，成员获得新资源号，
+实体事件与成员映射事件完整记录"谁何时并入/拆出"，可解释地回放每次归属变化。
+
+```bash
+python3 -m collector resolve --input fixtures/resources.json --db var/resources.sqlite3
+python3 -m collector entities --db var/resources.sqlite3
+python3 -m collector decide --db var/resources.sqlite3 --decision '{"type":"merge","sources":["a:7","b:2"],"version":1}'
+```
+
+`resolve` 演示名录入库、别名归一、候选解释、人工合并与撤销拆分的全过程，
+末尾输出完整性校验（每条采集记录恰好属于一个活跃实体，无丢失、无重复计数）。
+查询服务额外提供：`GET /entities`、`GET /entities/{资源号}`、`GET /entities/{资源号}/events`、
+`GET /candidates`（候选解释）、`GET /records/{键}/history`（资源号映射史）、
+`GET /integrity`（完整性校验）、`POST /decisions`（人工确认/拆分，409 表示版本冲突）。
+
 ## 可复现运行
 
 宿主机或容器均不需要网络。镜像准备好以后可以关闭外部网络再运行上述命令。
